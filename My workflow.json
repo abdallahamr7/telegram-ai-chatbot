@@ -1,0 +1,133 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c7564c3f-f4a2-44b9-bbe2-8e94f784c882",
+      "name": "Telegram Trigger",
+      "webhookId": "e0ba2abb-9bc9-4e1b-93ba-f17b2d8cc104",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDSAkwwHfsSz3ibn",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d31bb453-f538-4cb6-9390-7af7f51fbaf5",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "5a03f7af-bcc7-4dc4-92d8-4717f8f4a957",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "nrpl5kJUpNXtVfPv",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "34138df4-b672-4c72-ab7a-972fe5cc2af7",
+      "name": "Send a text message",
+      "webhookId": "e37b07f6-22c5-4804-86ba-a52b33bac087",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDSAkwwHfsSz3ibn",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "411babb5-2d00-4616-97f1-0c129946cb04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0e3101154f481f8beb8595dfc0eb8cb8c5183f54e3887f71e01b1ec773b2e850"
+  },
+  "id": "W7XvEO458tjm7N1u",
+  "tags": []
+}
